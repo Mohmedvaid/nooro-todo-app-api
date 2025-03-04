@@ -1,15 +1,14 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../db";
 import { ApiError } from "../utils/errors";
 import { CreateTaskInput, UpdateTaskInput } from "../types";
 
-// Initialize Prisma client
-const prisma = new PrismaClient();
-
 /**
- * @desc    Get all tasks
- * @route   GET /tasks
- * @access  Public
+ * Get all tasks.
+ * @route GET /tasks
+ * @access Public
+ * @param req - The Express request object.
+ * @param res - The Express response object.
  */
 export const getTasks = async (req: Request, res: Response) => {
   try {
@@ -21,9 +20,11 @@ export const getTasks = async (req: Request, res: Response) => {
 };
 
 /**
- * @desc    Create a new task
- * @route   POST /tasks
- * @access  Public
+ * Create a new task.
+ * @route POST /tasks
+ * @access Public
+ * @param req - The Express request object.
+ * @param res - The Express response object.
  */
 export const createTask = async (req: Request, res: Response) => {
   const { title, color } = req.body as CreateTaskInput;
@@ -32,7 +33,6 @@ export const createTask = async (req: Request, res: Response) => {
   if (!title || typeof title !== "string" || title.trim() === "") {
     throw new ApiError(400, "Title is required and must be a non-empty string");
   }
-
   if (!color || typeof color !== "string" || color.trim() === "") {
     throw new ApiError(400, "Color is required and must be a non-empty string");
   }
@@ -52,9 +52,11 @@ export const createTask = async (req: Request, res: Response) => {
 };
 
 /**
- * @desc    Update a task by ID
- * @route   PUT /tasks/:id
- * @access  Public
+ * Update a task by ID.
+ * @route PUT /tasks/:id
+ * @access Public
+ * @param req - The Express request object with task ID in params.
+ * @param res - The Express response object.
  */
 export const updateTask = async (
   req: Request<{ id: string }>,
@@ -76,14 +78,12 @@ export const updateTask = async (
   ) {
     throw new ApiError(400, "Title must be a non-empty string if provided");
   }
-
   if (
     color !== undefined &&
     (typeof color !== "string" || color.trim() === "")
   ) {
     throw new ApiError(400, "Color must be a non-empty string if provided");
   }
-
   if (completed !== undefined && typeof completed !== "boolean") {
     throw new ApiError(400, "Completed must be a boolean if provided");
   }
@@ -111,9 +111,11 @@ export const updateTask = async (
 };
 
 /**
- * @desc    Delete a task by ID
- * @route   DELETE /tasks/:id
- * @access  Public
+ * Delete a task by ID.
+ * @route DELETE /tasks/:id
+ * @access Public
+ * @param req - The Express request object with task ID in params.
+ * @param res - The Express response object.
  */
 export const deleteTask = async (
   req: Request<{ id: string }>,

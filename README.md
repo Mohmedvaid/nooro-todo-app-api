@@ -51,9 +51,28 @@ ALLOWED_ORIGINS=http://localhost:3001
 - Replace user and password with your PostgreSQL credentials.  
 - Ensure the database nooro-todo exists in PostgreSQL. Create it if needed by running: CREATE DATABASE "nooro-todo";
 
-Run Database Migrations  
-Apply the Prisma migrations to set up the database schema:  
-npx prisma migrate dev --name init
+#### Database Setup
+
+This application uses PostgreSQL as the database. Follow these steps to set up PostgreSQL locally:
+
+1. **Install PostgreSQL**  
+   - If PostgreSQL is not installed, download and install it from the official website: [https://www.postgresql.org/download/](https://www.postgresql.org/download/).  
+   - For macOS, you can use Homebrew: `brew install postgresql`.  
+   - For Windows or Linux, follow the installer instructions on the PostgreSQL website.
+
+2. **Start the PostgreSQL Server**  
+   - Ensure the PostgreSQL server is running on your machine.  
+     - On macOS (with Homebrew): `brew services start postgresql`.  
+     - On Windows, start the "PostgreSQL Server" service via the Services app or use the installer’s startup tool.  
+     - On Linux, use: `sudo service postgresql start`.  
+   - Verify PostgreSQL is running by connecting to it: `psql -U postgres`. If this command opens the `psql` prompt, PostgreSQL is running.
+
+3. **Create a Database User (Optional)**  
+   - By default, PostgreSQL creates a `postgres` user. You can use this user or create a new one.  
+   - To create a new user, connect to PostgreSQL: `psql -U postgres`, then run:  
+     ```sql
+     CREATE ROLE nooro_user WITH LOGIN PASSWORD 'your_secure_password';
+     ALTER ROLE nooro_user CREATEDB;
 
 Start the Server  
 - Development Mode: npm run dev (This uses ts-node to run the server directly.)  

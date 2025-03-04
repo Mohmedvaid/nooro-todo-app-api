@@ -1,19 +1,24 @@
 import express, { Express } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { PrismaClient } from "@prisma/client";
+import "express-async-errors";
 import taskRoutes from "./routes/taskRoutes";
 import { errorHandler } from "./middleware/errorHandler";
-
-// Import express-async-errors to handle async errors
-import "express-async-errors";
+import { logInfo } from "./utils/logger";
+import {
+  DEFAULT_PORT,
+  CORS_METHODS,
+  CORS_ALLOWED_HEADERS,
+} from "./constants/server";
+import { API_BASE_PATH } from "./constants/api";
 
 // Load environment variables
 dotenv.config();
 
-// Initialize Express app
+/**
+ * Initializes and starts the Express server.
+ */
 const app: Express = express();
-const prisma = new PrismaClient();
 
 // Middleware
 app.use(express.json());
@@ -29,30 +34,30 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"],
+    methods: CORS_METHODS,
+    allowedHeaders: CORS_ALLOWED_HEADERS,
   })
 );
 
 // Routes
-app.use("/", taskRoutes);
+app.use(API_BASE_PATH, taskRoutes);
 
 // Global error handler (must be after routes)
 app.use(errorHandler);
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || DEFAULT_PORT;
 const server = app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  logInfo(`Server running on port ${PORT}`);
 });
 
-// Graceful shutdown
+/**
+ * Handles graceful shutdown of the server.
+ */
 const shutdown = () => {
-  console.log("Shutting down server...");
-  server.close(async () => {
-    console.log("Server closed");
-    await prisma.$disconnect();
-    console.log("Prisma client disconnected");
+  logInfo("Shutting down server...");
+  server.close(() => {
+    logInfo("Server closed");
     process.exit(0);
   });
 };

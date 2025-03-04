@@ -1,31 +1,38 @@
 import { ErrorRequestHandler, Request, Response, NextFunction } from "express";
 import { ApiError } from "../utils/errors";
+import { logError } from "../utils/logger";
 
-// Define the error handler with the explicit ErrorRequestHandler type
+/**
+ * Global error handling middleware for Express.
+ * @param error - The error object.
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ * @param next - The next middleware function.
+ */
 export const errorHandler: ErrorRequestHandler = (
   error: Error,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  // Log the error for debugging (in production, use a proper logging service)
-  console.error(`[ERROR] ${req.method} ${req.url} - ${error.message}`);
+  // Log the error using the custom logger
+  logError(`${req.method} ${req.url} - ${error.message}`);
 
   if (error instanceof ApiError) {
     res.status(error.statusCode).json({
       status: "error",
       message: error.message,
     });
-    return; // Explicitly return void
+    return;
   }
 
-  // Handle Prisma-specific errors if needed
+  // Handle Prisma-specific errors
   if (error instanceof Error && error.message.includes("Prisma")) {
     res.status(500).json({
       status: "error",
       message: "Database error occurred",
     });
-    return; // Explicitly return void
+    return;
   }
 
   // Generic server error
@@ -33,5 +40,4 @@ export const errorHandler: ErrorRequestHandler = (
     status: "error",
     message: "Internal server error",
   });
-  // No need to call next() since this is the last middleware
 };

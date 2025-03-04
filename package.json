@@ -1,16 +1,24 @@
 {
   "name": "nooro-todo-app-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "REST API for the Nooro Todo App, built with Express.js, Prisma, and PostgreSQL.",
+  "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",
     "build": "tsc",
-    "dev": "ts-node src/server.ts"
+    "dev": "ts-node src/server.ts",
+    "migrate:dev": "npx prisma migrate dev",
+    "studio": "npx prisma studio"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "todo-app",
+    "express",
+    "prisma",
+    "postgresql",
+    "typescript"
+  ],
+  "author": "Mohmed Vaid",
+  "license": "MIT",
   "dependencies": {
     "@prisma/client": "^6.4.1",
     "cors": "^2.8.5",
@@ -22,6 +30,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.9",
+    "prisma": "^6.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
   }
